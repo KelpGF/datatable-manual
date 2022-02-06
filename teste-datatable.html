@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script
+        src="https://code.jquery.com/jquery-3.6.0.js"
+        integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+        crossorigin="anonymous">
+    </script>
+    <title>DataTable</title>
+</head>
+<body>
+    <div class="container">
+        <div class="card mt-3">
+            <div class="card-body">
+                <input 
+                    type="text" placeholder="nome" class="form-control elemento-datatable"
+                    onchange="pesquisa_datatable.nome = this.value"
+                >
+
+                <select
+                    class="form-select elemento-datatable" aria-label="Default select example"
+                    onChange="mudarQtdResgistroPagina(this.value)"
+                >
+                <option value="5">5</option>
+                    <option value="10" selected>10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <!-- <option value="100">100</option>
+                    <option value="200">200</option>
+                    <option value="500">500</option>
+                    <option value="1000">1000</option> -->
+                </select>
+
+                <button class="btn btn-success" onclick="mudarPaginaDataTable(1, '')">
+                    Pesquisar
+                </button>
+
+                <p class="carregamento-datatable">
+                    Carregando
+                </p>
+
+                <table class="table table-borderlass" id="datatable">
+                    <thead></thead>
+                    <tbody></tbody>
+                </table>
+
+                <nav aria-label="Page navigation example">
+                    <div class="row">
+                        <div class="col-10">
+                            <ul class="pagination" id="paginacao_datatable">
+                            </ul>
+                        </div>
+                        <div class="col-2">
+                            <div class="row g-3 align-items-center">
+                                <div class="col-auto">
+                                    <label for="select-paginacao_datatable" class="col-form-label">Página: </label>
+                                </div>
+                                <div class="col-auto">
+                                    <select class="form-control" id="select-paginacao_datatable" onChange="mudarPaginaDataTable(this.value, '')"></select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script src="datatable.js"></script>
+
+<script defer>
+    function formatarNomePessoa(nome_completo) {
+        if (nome_completo.length == 0) return "";
+    
+        const nome_quebrado = (nome_completo.trim()).split(" ");
+    
+        if (nome_quebrado.length < 3) return nome_completo;
+    
+        if (nome_quebrado[1].length < 4) return nome_quebrado[0]+" "+nome_quebrado[1]+" "+nome_quebrado[2];
+    
+        return nome_quebrado[0]+" "+nome_quebrado[1];
+    }
+    
+    function formatarData(data) {
+        const data_quebrada = data.split("-");
+    
+        return data_quebrada[2]+"/"+data_quebrada[1]+"/"+data_quebrada[0]
+    }
+    
+    function formatarMoeda(valor) {
+        return Number(valor).toLocaleString('pt-br', {style: 'currency', currency: 'BRL'})
+    }
+    const headers_table = [
+        {
+            texto: 'Nome',
+            valor: 'nome',
+            tipo: 'string',
+            tratamento: function(nome) {
+                return (nome) ? formatarNomePessoa(nome) : "";
+            }
+        },
+        {
+            texto: 'Data Nascimento',
+            valor: 'dt_nasc',
+            tipo: 'date',
+            tratamento: function(data) {
+                return (data) ? formatarData(data) : "";
+            }
+        },
+        {
+            texto: 'Salário',
+            valor: 'vl_salario',
+            tipo: 'number',
+            tratamento: function(salario) {
+                return (salario) ? formatarMoeda(Number(salario)) : "";
+            }
+        },
+    ];
+
+    let link_dados_datatable = "http://localhost/datatable/teste.php";
+    pegarDadosDataTable(headers_table);
+
+    function ver(id) {
+        console.log(id);
+    }
+    function editar(id) {
+        console.log(id);
+    }
+
+
+    let acoes_datatable = [
+        {
+            texto: 'Vizualizar',
+            icone: 'fa fa-eye',
+            cor: 'info',
+            funcao: 'ver'
+        },
+        {
+            texto: 'Editar',
+            icone: 'fa fa-edit',
+            cor: 'warning',
+            funcao: 'editar'
+        }
+    ];
+</script>
